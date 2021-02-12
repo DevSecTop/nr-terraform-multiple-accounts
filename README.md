@@ -30,6 +30,40 @@
 
 Observe that notifications channels, alert policies and conditions are generated and linked together for each account. Additionally, `bravo-x` account features a second alert policy with a different set of conditions.
 
+<details><summary>View tabulated list of alert conditions…</summary>
+
+| environment | signal          | type     | threshold | occurrences   | nrql                                                                                                                                                          |
+| ----------- | --------------- | -------- | --------: | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| alpha       | cpu utilisation | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.cpu.usertime.utilization) FACET appName WHERE appName NOT LIKE 'P%X %'`                                               |
+| alpha       | cpu utilisation | static   |        50 | all           | `FROM Metric SELECT average(apm.service.cpu.usertime.utilization) FACET appName WHERE appName NOT LIKE 'P%X %'`                                               |
+| alpha       | error rate      | baseline |         3 | all           | `FROM Metric SELECT count(apm.service.transaction.error.count) / count(apm.service.transaction.duration) \* 100 FACET appName WHERE appName NOT LIKE 'P%X %'` |
+| alpha       | error rate      | static   |         1 | all           | `FROM Metric SELECT count(apm.service.transaction.error.count) / count(apm.service.transaction.duration) \* 100 FACET appName WHERE appName NOT LIKE 'P%X %'` |
+| alpha       | memory usage    | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.memory.physical) / 1000 FACET appName WHERE appName NOT LIKE 'P%X %'`                                                 |
+| alpha       | response time   | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.transaction.duration) FACET appName WHERE appName NOT LIKE 'P%X %'`                                                   |
+| alpha       | response time   | static   |         3 | all           | `FROM Metric SELECT average(apm.service.transaction.duration) FACET appName WHERE appName NOT LIKE 'P%X %'`                                                   |
+| alpha       | throughput      | baseline |         3 | all           | `FROM Metric SELECT rate(count(apm.service.transaction.duration),1 minute) FACET appName WHERE appName NOT LIKE 'P%X %'`                                      |
+| alpha       | throughput      | static   |    999999 | at_least_once | `FROM Metric SELECT count(apm.service.transaction.duration) FACET appName WHERE appName NOT LIKE 'P%X %'`                                                     |
+| bravo       | cpu utilisation | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.cpu.usertime.utilization) FACET appName WHERE appName NOT LIKE 'P%X %'`                                               |
+| bravo       | cpu utilisation | static   |        50 | all           | `FROM Metric SELECT average(apm.service.cpu.usertime.utilization) FACET appName WHERE appName NOT LIKE 'P%X %'`                                               |
+| bravo       | error rate      | baseline |         3 | all           | `FROM Metric SELECT count(apm.service.transaction.error.count) / count(apm.service.transaction.duration) \* 100 FACET appName WHERE appName NOT LIKE 'P%X %'` |
+| bravo       | error rate      | static   |         1 | all           | `FROM Metric SELECT count(apm.service.transaction.error.count) / count(apm.service.transaction.duration) \* 100 FACET appName WHERE appName NOT LIKE 'P%X %'` |
+| bravo       | memory usage    | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.memory.physical) / 1000 FACET appName WHERE appName NOT LIKE 'P%X %'`                                                 |
+| bravo       | response time   | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.transaction.duration) FACET appName WHERE appName NOT LIKE 'P%X %'`                                                   |
+| bravo       | response time   | static   |         3 | all           | `FROM Metric SELECT average(apm.service.transaction.duration) FACET appName WHERE appName NOT LIKE 'P%X %'`                                                   |
+| bravo       | throughput      | baseline |         3 | all           | `FROM Metric SELECT rate(count(apm.service.transaction.duration),1 minute) FACET appName WHERE appName NOT LIKE 'P%X %'`                                      |
+| bravo       | throughput      | static   |    999999 | at_least_once | `FROM Metric SELECT count(apm.service.transaction.duration) FACET appName WHERE appName NOT LIKE 'P%X %'`                                                     |
+| bravox      | cpu utilisation | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.cpu.usertime.utilization) FACET appName WHERE appName LIKE 'P%X %'`                                                   |
+| bravox      | cpu utilisation | static   |        50 | all           | `FROM Metric SELECT average(apm.service.cpu.usertime.utilization) FACET appName WHERE appName LIKE 'P%X %'`                                                   |
+| bravox      | error rate      | baseline |         3 | all           | `FROM Metric SELECT count(apm.service.transaction.error.count) / count(apm.service.transaction.duration) \* 100 FACET appName WHERE appName LIKE 'P%X %'`     |
+| bravox      | error rate      | static   |         1 | all           | `FROM Metric SELECT count(apm.service.transaction.error.count) / count(apm.service.transaction.duration) \* 100 FACET appName WHERE appName LIKE 'P%X %'`     |
+| bravox      | memory usage    | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.memory.physical) / 1000 FACET appName WHERE appName LIKE 'P%X %'`                                                     |
+| bravox      | response time   | baseline |         3 | all           | `FROM Metric SELECT average(apm.service.transaction.duration) FACET appName WHERE appName LIKE 'P%X %'`                                                       |
+| bravox      | response time   | static   |         3 | all           | `FROM Metric SELECT average(apm.service.transaction.duration) FACET appName WHERE appName LIKE 'P%X %'`                                                       |
+| bravox      | throughput      | baseline |         3 | all           | `FROM Metric SELECT rate(count(apm.service.transaction.duration),1 minute) FACET appName WHERE appName LIKE 'P%X %'`                                          |
+| bravox      | throughput      | static   |    999999 | at_least_once | `FROM Metric SELECT count(apm.service.transaction.duration) FACET appName WHERE appName LIKE 'P%X %'`                                                         |
+
+</details>
+
 ## Installation
 
 ### Modules
@@ -37,11 +71,11 @@ Observe that notifications channels, alert policies and conditions are generated
 - Each is module is located in its own subdirectory to:
   - Encourage reusability: keeping code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
   - Prevent conflict of duplicate entity names.
-- They're paired with a generic `versions.tf` which inherits specific version details from [`./environments/versions.tf`](environments/versions.tf): remaining flexible for upgrades.
+- They're paired with a generic [`versions.tf`](modules/channels/versions.tf) which inherits specific version details from [`./environments/versions.tf`](environments/versions.tf): remaining flexible for upgrades.
 
-| Module                                 | Description                                         | Input                                                                       | Output                                |
-| -------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------- |
-| [channels](modules/channels/main.tf) | Alert notification channels.                        | None.                                                                       | List of `newrelic_alert_channel` IDs. |
+| Module                               | Description                                         | Input                                                               | Output                                |
+| ------------------------------------ | --------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------- |
+| [channels](modules/channels/main.tf) | Alert notification channels.                        | None.                                                               | List of `newrelic_alert_channel` IDs. |
 | [alerts](modules/alerts/main.tf)     | Alert policy with associated NRQL alert conditions. | Name of alert policy; list of alert channel IDs; selection of apps. | None.                                 |
 
 ### Environments
@@ -68,12 +102,12 @@ Pull requests are welcome and appreciated. For major contributions, please open 
 
 ## License
 
-[gpl-3.0](LICENSE) GNU General Public License v3.0
+[GNU General Public License v3.0](LICENSE)
 
 ## Credits
 
 Neither myself nor this project are associated with New Relic™.
 
-All works herein are my own, shared of my own volition.
+All works herein are my own and shared of my own volition.
 
 Copyleft @ All wrongs reserved.
