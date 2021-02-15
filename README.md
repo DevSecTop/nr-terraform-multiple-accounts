@@ -15,8 +15,8 @@
 
 ## Prerequisites
 
-- [Terraform](https://www.terraform.io/downloads.html) v0.14.0+
-- [New Relic Provider](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs) v2.18.0+
+- [Terraform](https://www.terraform.io/downloads.html) v0.14.6
+- [New Relic Provider](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs) v2.18.0
 
 ## Usage
 
@@ -28,7 +28,7 @@
       Found within [`./environments/alpha.tf`](environments/alpha.tf) and [`./environments/bravo-x.tf`](environments/bravo-x.tf).
 1. When ready, run `terraform apply` to preview changes before applying.
 
-Observe that notifications channels, alert policies and conditions are generated and linked together for each account. Additionally, `bravo-x` account features a second alert policy with a different set of conditions.
+Observe that notifications channels, alert policies and conditions are generated and linked together for each account. Additionally, `bravo-x` account features a second alert policy with a different set of conditions, while reusing the same notification channels.
 
 <details><summary>View tabulated list of alert conditions…</summary>
 
@@ -68,7 +68,7 @@ Observe that notifications channels, alert policies and conditions are generated
 
 ### Modules
 
-- Each is module is located in its own subdirectory to:
+- Each module is located in its own subdirectory to:
   - Encourage reusability: keeping code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
   - Prevent conflict of duplicate entity names.
 - They're paired with a generic [`versions.tf`](modules/channels/versions.tf) which inherits specific version details from [`./environments/versions.tf`](environments/versions.tf): remaining flexible for upgrades.
