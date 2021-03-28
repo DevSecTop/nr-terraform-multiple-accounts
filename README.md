@@ -102,7 +102,7 @@ Pull requests are welcome and appreciated. For major contributions, please open 
 
 ## License
 
-[GNU General Public License v3.0](LICENSE)
+[GNU Affero General Public License v3.0](LICENSE)
 
 ## Credits
 
